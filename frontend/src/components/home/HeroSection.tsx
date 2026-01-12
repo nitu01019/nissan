@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Play, Pause, Car, MapPin, Phone } from "lucide-react";
@@ -15,7 +15,7 @@ const heroSlides = [
     tagline: "Big. Bold. Beautiful.",
     description: "India's most feature-loaded compact SUV. Wireless Apple CarPlay, 360° camera, and turbocharged performance.",
     price: "₹5.99 Lakh*",
-    image: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&q=80&auto=format",
+    image: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400&q=60&auto=format",
     bgGradient: "from-slate-900 via-red-950 to-slate-900",
     ctaLink: "/cars/nissan-magnite",
   },
@@ -26,7 +26,7 @@ const heroSlides = [
     tagline: "Intelligent Mobility",
     description: "Premium SUV with Around View Monitor, 6 airbags, and advanced connectivity features.",
     price: "₹9.84 Lakh*",
-    image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&q=80&auto=format",
+    image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&q=60&auto=format",
     bgGradient: "from-slate-900 via-blue-950 to-slate-900",
     ctaLink: "/cars/nissan-kicks",
   },
@@ -37,7 +37,7 @@ const heroSlides = [
     tagline: "e-POWER Technology",
     description: "Experience electrified driving without plugging in. ProPILOT assist and panoramic sunroof.",
     price: "₹34.99 Lakh*",
-    image: "https://images.unsplash.com/photo-1625231334168-76bc42068e0f?w=800&q=80&auto=format",
+    image: "https://images.unsplash.com/photo-1625231334168-76bc42068e0f?w=400&q=60&auto=format",
     bgGradient: "from-slate-900 via-emerald-950 to-slate-900",
     ctaLink: "/cars/nissan-x-trail",
   },
@@ -48,19 +48,32 @@ const heroSlides = [
     tagline: "Comfort Meets Efficiency",
     description: "Spacious sedan with exceptional fuel efficiency, perfect for families who value comfort.",
     price: "₹8.99 Lakh*",
-    image: "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&q=80&auto=format",
+    image: "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=400&q=60&auto=format",
     bgGradient: "from-slate-900 via-amber-950 to-slate-900",
     ctaLink: "/cars/nissan-sunny",
   },
 ];
 
-export const HeroSection: React.FC = () => {
+// Preload first image immediately
+if (typeof window !== 'undefined') {
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'image';
+  link.href = heroSlides[0].image;
+  document.head.appendChild(link);
+}
+
+export const HeroSection: React.FC = memo(function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true); // Start as true for instant render
 
   useEffect(() => {
-    setIsLoaded(true);
+    // Preload other images in background after mount
+    heroSlides.slice(1).forEach((slide) => {
+      const img = new window.Image();
+      img.src = slide.image;
+    });
   }, []);
 
   const nextSlide = useCallback(() => {
@@ -80,26 +93,14 @@ export const HeroSection: React.FC = () => {
   const slide = heroSlides[currentSlide];
 
   return (
-    <section className={`relative min-h-[90vh] md:min-h-screen overflow-hidden bg-gradient-to-br ${slide.bgGradient} transition-all duration-1000`}>
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{ 
-            scale: [1, 1.2, 1],
-            rotate: [0, 90, 0],
-            opacity: [0.03, 0.08, 0.03]
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-1/2 -right-1/4 w-[1000px] h-[1000px] rounded-full bg-primary-500"
+    <section className={`relative min-h-[90vh] md:min-h-screen overflow-hidden bg-gradient-to-br ${slide.bgGradient} transition-colors duration-500`}>
+      {/* Static Background Elements - No heavy animations */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div
+          className="absolute -top-1/2 -right-1/4 w-[1000px] h-[1000px] rounded-full bg-primary-500 opacity-5"
         />
-        <motion.div
-          animate={{ 
-            scale: [1.2, 1, 1.2],
-            rotate: [0, -90, 0],
-            opacity: [0.05, 0.1, 0.05]
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-1/2 -left-1/4 w-[800px] h-[800px] rounded-full bg-white"
+        <div
+          className="absolute -bottom-1/2 -left-1/4 w-[800px] h-[800px] rounded-full bg-white opacity-5"
         />
         {/* Grid Pattern */}
         <div className="absolute inset-0 opacity-[0.02]" style={{

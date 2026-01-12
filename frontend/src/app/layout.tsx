@@ -181,6 +181,7 @@ export default function RootLayout({
         
         {/* Preload critical assets */}
         <link rel="preload" href="/images/placeholder.jpg" as="image" />
+        <link rel="preload" href="https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400&q=60&auto=format" as="image" />
         
         {/* SEO - Geo Tags for Jammu Location */}
         <meta name="geo.region" content="IN-JK" />
