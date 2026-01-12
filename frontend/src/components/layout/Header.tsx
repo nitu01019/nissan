@@ -40,16 +40,34 @@ export const Header: React.FC = () => {
     <>
       {/* Mobile Top Bar - Logo on left with bigger name */}
       <div className="lg:hidden bg-secondary-900 text-white py-3 px-4">
-        <div className="flex items-center justify-start">
+        <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-11 h-11 bg-gradient-to-br from-[#C3002F] to-[#8B0000] rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-lg">N</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-[#C3002F] to-[#8B0000] rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-base">N</span>
             </div>
             <div>
-              <h1 className="font-heading font-bold text-xl tracking-tight">Nissan</h1>
-              <p className="text-[11px] text-gray-400 font-medium">Authorized Dealer • Channi Himmat</p>
+              <h1 className="font-heading font-bold text-lg tracking-tight">Nissan</h1>
+              <p className="text-[10px] text-gray-400 font-medium">Channi Himmat, Jammu</p>
             </div>
           </Link>
+          
+          {/* Mobile Login/Profile Button */}
+          {isAuthenticated && user ? (
+            <Link href="/profile" className="flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-full">
+              <div className="w-7 h-7 bg-primary-500 rounded-full flex items-center justify-center text-white font-semibold text-xs">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-xs font-medium max-w-[60px] truncate">{user.name.split(' ')[0]}</span>
+            </Link>
+          ) : (
+            <Link 
+              href="/login" 
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 rounded-full text-white text-xs font-medium transition-colors"
+            >
+              <User className="w-3.5 h-3.5" />
+              Login
+            </Link>
+          )}
         </div>
       </div>
 
